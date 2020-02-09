@@ -1,0 +1,6 @@
+DBConstructor\ConnectionFactory.class
+DBConstructor\ConstructTables.class
+DBConstructor\PopulateIndividualGameData.class
+DBConstructor\PopulatePersistentStats.class
+DBConstructor\PopulateRoundWinners.class
+DBConstructor\App.class
