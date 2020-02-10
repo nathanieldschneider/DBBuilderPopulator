@@ -4,7 +4,7 @@ import java.sql.*;
 public class PopulatePlayer {
 
     public PopulatePlayer(){
-        id = new int[]{1,2,3,4,5};
+        id = new int[]{0,1,2,3,4};
         name = new String[]{"Human","AiOne","AiTwo","AiThree","AiFour"};
     }
 
