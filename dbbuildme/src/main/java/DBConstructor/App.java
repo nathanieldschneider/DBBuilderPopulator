@@ -8,13 +8,8 @@ public class App {
         ConstructTables chineseWorkers = new ConstructTables();
         chineseWorkers.createTables();
 
-        PopulateRoundWinners rounders = new PopulateRoundWinners();
-        rounders.populate();
-
-        PopulateIndividualGameData confusingName = new PopulateIndividualGameData();
+        PopulateIndividual confusingName = new PopulateIndividual();
         confusingName.populate();
-
-        PopulatePersistentStats.populate();
 
         try {
             ConnectionFactory.closeConnection();

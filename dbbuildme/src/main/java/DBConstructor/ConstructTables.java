@@ -10,76 +10,75 @@ public class ConstructTables {
     Connection conn;
 
     public boolean createTables(){
-
-        PreparedStatement constructRoundWinners = null;
-        PreparedStatement constructPersistentStats = null;
+        
         PreparedStatement constructIndividualGame = null;
-        PreparedStatement insertBlankRow = null;
+        PreparedStatement constructPlayer = null;
+        PreparedStatement constructPerformance = null;
 
-        String constructRoundWinnersSQL = 
-        "CREATE TABLE round_winners(" +
-            "Game_ID SERIAL," +
-            "Human_wins INT," +
-            "Ai_1_wins INT," +
-            "Ai_2_wins INT," +
-            "Ai_3_wins INT," +
-            "Ai_4_wins INT," +
-            "PRIMARY KEY (Game_ID)" +
+        String constructPlayerSQL = "CREATE TABLE player(player_ID int not null,name varchar(20) not null,primary key (player_id));";
+
+        String constructPerformanceSQL = "CREATE TABLE player_performance(" +
+            "player_id INT NOT NULL REFERENCES player(player_id) on DELETE CASCADE," +
+            "game_id INT NOT NULL REFERENCES individual_game_data(game_id) on DELETE CASCADE," +
+            "rounds_won INT NOT NULL," + 
+            "PRIMARY KEY(player_id,game_id) " +
         ");";
 
-        String constructPersistentStatsSQL =
-        "CREATE TABLE Persistent_Game_Data (" +
-            "Games_Played INT, " +
-            "AI_Wins INT, " +
-            "Human_Wins INT, " +
-            "Draws_Average INT, " +
-            "Max_Rounds INT " +
-            ");";
-
-        String constructIndividualGameSQL = 
-
-        "CREATE TABLE Individual_Game_Data (" +
+        String constructIndividualGameSQL =   "CREATE TABLE Individual_Game_Data (" +
             "Game_ID SERIAL NOT NULL," + 
-            "Winner VARCHAR(32)," + 
+            "Winner_id INT NOT NULL," + 
             "Rounds_Played INT," + 
             "Draws INT," + 
             "PRIMARY KEY (Game_ID)" +
-            ");";
-
-        String insertBlankRowSQL =
-
-        "INSERT INTO persistent_game_data(games_played,ai_wins,human_wins,draws_average,max_rounds)" +
-        "VALUES (default,default,default,default,default);";
+        ");";
 
         try {
 
-            constructRoundWinners = conn.prepareStatement(constructRoundWinnersSQL);
-            constructRoundWinners.executeUpdate();
+            if(tableExist("player_performance") == false){
+                constructPerformance = conn.prepareStatement(constructPerformanceSQL);
+                constructPerformance.executeUpdate();
+            }
 
-            constructPersistentStats = conn.prepareStatement(constructPersistentStatsSQL);
-            constructPersistentStats.executeUpdate();
-
-            constructIndividualGame = conn.prepareStatement(constructIndividualGameSQL);
-            constructIndividualGame.executeUpdate();
-
-            insertBlankRow = conn.prepareStatement(insertBlankRowSQL);
-            insertBlankRow.executeUpdate();
+            if(tableExist("individual_game_data") == false){
+                constructIndividualGame = conn.prepareStatement(constructIndividualGameSQL);
+                constructIndividualGame.executeUpdate();
+            }
+            if(tableExist("player") == false){
+                constructPlayer = conn.prepareStatement(constructPlayerSQL);
+                constructPlayer.executeUpdate();
+                PopulatePlayer pop = new PopulatePlayer();
+                pop.populate();
+            }
 
         } catch(SQLException e){
-            System.out.println("Tables already constructed. Adding 10 rows to each.");
+            e.printStackTrace();
         }
 
         finally{
             try{
 
-                if(constructRoundWinners != null) {constructRoundWinners.close();}
-                if(constructPersistentStats != null) {constructPersistentStats.close();}
                 if(constructIndividualGame != null) {constructIndividualGame.close();}
-                if(insertBlankRow != null) {insertBlankRow.close();}
+                if(constructPerformance != null) {constructPerformance.close();}
+                if(constructPlayer != null) {constructPlayer.close();}
 
             }catch(SQLException e){e.printStackTrace();}
         }
-
         return true;
+    }
+    
+    public static boolean tableExist(String tableName) throws SQLException {
+        Connection conn = ConnectionFactory.getConnection();
+        boolean tExists = false;
+        try (ResultSet rs = conn.getMetaData().getTables(null, null, tableName, null)) {
+            while (rs.next()) { 
+                String tName = rs.getString(tableName);
+                if (tName != null && tName.equals(tableName)) {
+                    tExists = true;
+                    System.out.println("Table " + tableName + " already exists.");
+                    break;
+                }
+            }
+        }
+        return tExists;
     }
 }
