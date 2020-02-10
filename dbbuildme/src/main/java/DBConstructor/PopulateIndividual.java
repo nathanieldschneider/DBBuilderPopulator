@@ -53,6 +53,6 @@ public class PopulateIndividual {
             performance.create();
         }
 
-        System.out.println("Individual game stats relation populated.");
+        System.out.println("Relations populated.");
     }
 }

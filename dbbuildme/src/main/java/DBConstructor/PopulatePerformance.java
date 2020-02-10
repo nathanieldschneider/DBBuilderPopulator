@@ -32,10 +32,10 @@ public class PopulatePerformance{
 
         try{
 
-            for(int i = 0;i<=getRandomInRange(1, 4);i++){
+            for(int i = 1;i<=getRandomInRange(1, 4);i++){
                 stmt = conn.prepareStatement(stmtSQL);
                 stmt.setInt(1,getGameID());
-                stmt.setInt(2,getRandomInRange(1, 5));
+                stmt.setInt(2,i);
                 stmt.setInt(3,getRandomInRange(3, 30));
                 stmt.executeUpdate();
             }

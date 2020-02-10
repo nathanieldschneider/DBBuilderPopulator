@@ -34,11 +34,6 @@ public class ConstructTables {
 
         try {
 
-            if(tableExist("player_performance") == false){
-                constructPerformance = conn.prepareStatement(constructPerformanceSQL);
-                constructPerformance.executeUpdate();
-            }
-
             if(tableExist("individual_game_data") == false){
                 constructIndividualGame = conn.prepareStatement(constructIndividualGameSQL);
                 constructIndividualGame.executeUpdate();
@@ -48,6 +43,11 @@ public class ConstructTables {
                 constructPlayer.executeUpdate();
                 PopulatePlayer pop = new PopulatePlayer();
                 pop.populate();
+            }
+
+            if(tableExist("player_performance") == false){
+                constructPerformance = conn.prepareStatement(constructPerformanceSQL);
+                constructPerformance.executeUpdate();
             }
 
         } catch(SQLException e){
@@ -71,7 +71,7 @@ public class ConstructTables {
         boolean tExists = false;
         try (ResultSet rs = conn.getMetaData().getTables(null, null, tableName, null)) {
             while (rs.next()) { 
-                String tName = rs.getString(tableName);
+                String tName = rs.getString("TABLE_NAME");
                 if (tName != null && tName.equals(tableName)) {
                     tExists = true;
                     System.out.println("Table " + tableName + " already exists.");
