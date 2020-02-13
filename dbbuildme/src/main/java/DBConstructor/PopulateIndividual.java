@@ -25,7 +25,7 @@ public class PopulateIndividual {
         try {
 
             createRow = con.prepareStatement(createRowSQL);
-            createRow.setInt(1,getRandomInRange(1, 5));
+            createRow.setInt(1,getRandomInRange(0, 4));
             createRow.setInt(2,getRandomInRange(10, 40));
             createRow.setInt(3,getRandomInRange(5, 30));
 
